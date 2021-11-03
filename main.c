@@ -6,10 +6,12 @@
 #include "functions.c"
 #include <stdlib.h>
 
-int v(int n, int* opened, FILE** origin_file, int* lines_count)
+int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_count, char** arr)
 {
+    fclose(*origin_file);
+    FILE* arrayViewFile = fopen("arrayViewFile.txt", "w");
     FILE* local_subor;
-    if (*opened == 0) {
+    if (n == 0) {
         local_subor = fopen("konferencny_zoznam.txt", "r");
         if (local_subor == NULL)
         {
@@ -267,6 +269,7 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count)
                 
                 //output
                 if (errors == 0) {
+                    int symbols = 0;
                     *lines_count = ryad;
                     if ((ryad + 1) % 9 == 0) {
                         //output from file
@@ -276,10 +279,17 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count)
                         char ch = getc(local_subor);
                         while (ch != EOF) {
                             if (ch == '\n') {
-                                i++; if (i == 9) {
+                                if (i != 8) {
+                                    fprintf(arrayViewFile, ".");
+                                    symbols++;
+                                }
+                                i++;
+                                if (i == 9) {
                                     i = 1;
                                     ch = getc(local_subor);
                                     printf("\n");
+                                    fprintf(arrayViewFile, "/");
+                                    symbols++;
                                 }
                                 printf("\n");
                                 if (i == 1 && !feof(local_subor)) printf("Prezenter:                   ");
@@ -293,10 +303,13 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count)
                             }
                             else {
                                 printf("%c", ch);
+                                symbols++;
+                                fprintf(arrayViewFile, "%c", ch);
                             }
                             ch = getc(local_subor);
                         }
                         printf("\n\n\nOpened successfuly, %d lines readed\n\n", *lines_count);
+                        *symbol_count = symbols;
                     }
                 }
                 else {
@@ -304,29 +317,66 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count)
                 }
                 
             }
-            else if (n == 1)
-            {
-                //output from dynamic arrays   
-            }
-
         }
         return 0;
     }
     else {
-        printf("v alreay used!\n");
-        //output from dynamic arrays
+        char chn = ' ';
+        for (int i = 0; i < *lines_count; i++) {
+            chn = arr[i];
+            if (chn = '.') printf("\n");
+            else if (chn == '/') printf("\n\n");
+            else printf("%c", chn);
+        }
+        return 0; 
     }
 }
 
-    int o()
+    int n(char** origin_line, int symbol_count, int opened, int* n_opened)
     {
-        
-    }
-    int n(char*** lines, FILE** file)
-    {
-        //write lines to array there
+        if (opened) {
+            char* line = (char*)malloc(symbol_count);
+            FILE* subor = fopen("konferencny_zoznam.txt", "r");
+            rewind(subor);
+            int i = 1, first = 1, j = 0;
+            char ch = getc(subor);
 
-
+            while (ch != EOF) {
+                if (ch == '\n') {
+                    if (i != 8) {
+                        char point = '.';
+                        line[j] = point;
+                        j++;
+                    }
+                    i++;
+                    if (i == 9) {
+                        i = 1;
+                        ch = getc(subor);
+                        char slesh = '/';
+                        line[j] = slesh;
+                        j++;
+                    }
+                }
+                else {
+                    line[j] = ch;
+                    j++;
+                }
+                ch = getc(subor);
+            }
+            char bruh = ' ';
+            for (int xd = 0; xd < symbol_count; xd++) {
+               
+                bruh = line[xd];
+                printf("Trying to make origin [%d] as %c\n", xd, bruh);
+                **(origin_line + xd) = bruh; //some not working thash there
+                printf("Wow origin [%d] is now %c\n", xd, *origin_line[xd]);
+            }
+            *n_opened = 1;
+        }
+        else {
+            printf("No file opened yet, write v to open file");
+        }
+        printf("\n");
     }
     int s()
     {
@@ -350,46 +400,41 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count)
 }
 
 
-
 int main()
 {
-    FILE* subor;
+    FILE* subor = fopen("konferencny_zoznam.txt", "r");
     char command;
     int _n = 0, opened = 0;
-    int lines_counter = 0;
+    int lines_counter = 0, symbol_counter = 0;
 
 
-    char** lines;
+    char* line = (char*)calloc(10000, sizeof(char));
 
     do
     {
         scanf("%c", &command);
         if (command == 'v')
         {
-            v(_n, &opened, &subor, &lines_counter);
+            v(_n, &opened, &subor, &lines_counter, &symbol_counter, line);
             printf("\n");
         }
         if (command == 'o')
         {
-            o();
+            
             printf("\n");
         }
         if (command == 'n') {
-            if (opened) {
-                n(&lines, &subor);
-            }
-            else {
-                printf("No file opened yet, write v to open file");
-            }
-            printf("\n");
-        }
-        if (command == 'c')//DELETETHEN
-        {
-            opened = 0;
+            char* _line = (char*)calloc(10000, sizeof(char));
+            n(&_line, symbol_counter, opened, &_n);
+
         }
         if (command == 'k')
         {
+            free(line);
             return 0;
+        }
+        if (command == 'x' && opened != 0) {
+           // x(lines, lines_counter);
         }
     } while (1);
     fclose(subor);
