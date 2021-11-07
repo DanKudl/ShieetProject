@@ -666,7 +666,6 @@ char* p(int opened, int n, int symbols, char line[], int lines_count) {
             return;
         }
         else {
-            printf("line :\n%s\n\n", line);//delete then
 
             char chislo[10];
             scanf("%s", chislo);
@@ -689,6 +688,10 @@ char* p(int opened, int n, int symbols, char line[], int lines_count) {
             for (int i = 0; i < blocks; i++) {
                 jobs[i] = (char*)calloc(200, sizeof(char));
             }
+            char** stuff = (char**)calloc(blocks, sizeof(char*));
+            for (int i = 0; i < blocks; i++) {
+                stuff[i] = (char*)calloc(200, sizeof(char));
+            }
             char** vars = (char**)calloc(blocks, sizeof(char*));
             for (int i = 0; i < blocks; i++) {
                 vars[i] = (char*)calloc(2, sizeof(char));
@@ -702,7 +705,6 @@ char* p(int opened, int n, int symbols, char line[], int lines_count) {
                 dates[i] = (char*)calloc(8, sizeof(char));
             }
             
-
             int current_block = 0, j = 0, dot_pos = 1;
             for (int i = 0; i < symbols; i++) {
                 if (line[i] == '/') {
@@ -727,6 +729,9 @@ char* p(int opened, int n, int symbols, char line[], int lines_count) {
                     else if (dot_pos == 4) {
                         jobs[current_block][j] = line[i]; j++;
                     }
+                    else if (dot_pos == 5) {
+                        stuff[current_block][j] = line[i]; j++;
+                    }
                     else if (dot_pos == 6) {
                         vars[current_block][j] = line[i]; j++;
                     }
@@ -750,25 +755,144 @@ char* p(int opened, int n, int symbols, char line[], int lines_count) {
                 return line;
             }
 
-            char* result_line = (char*)calloc(strlen(line), sizeof(char));
-
-            int choise; char kod[3]; char var[2]; char time[4]; char date[8];
+            char* result_line = (char*)calloc(symbols, sizeof(char));
+            int choise; char kod[3]; char var[2]; char time[4]; char date[8]; char ch[10];strcpy(ch, chislo);
             scanf("%d %s %s %s %s", &choise, kod, var, time, date);
+            
 
-            if(isalpha(kod[0]) && isupper(kod[0]) && isdigit(kod[1]) && isdigit(kod[2]) &&
-                ((strcmp(var, "UP") == 0 || (strcmp(var, "PP") == 0 || (strcmp(var, "PD") == 0 || (strcmp(var, "UD") == 0)))))) {
-                printf("pizda");
+            int error = 0;
+            int h1 = (time[0] - '0'); int h2 = (time[1] - '0'); int mi1 = (time[2] - '0'); int mi2 = (time[3] - '0'); int mo1 = (dates[4] - '0'); int mo2 = (dates[5] - '0'); int d1 = (time[6] - '0');int d2 = (time[7] - '0');
+            int _hours = h1 * 10 + h2, _minutes = mi1 * 10 + mi2, _month = mo1 * 10 + mo2, _day = d1 * 10 + d2;
+            if (choise > counter - 1) {
+                error = 1;
+                printf("Wrong number of participant\n");
+            }
+            else if (!isupper(kod[0])) {
+                error = 1;
+                printf("first code letter not upper\n");
+            }
+            else if (!isdigit(kod[1])) {
+                error = 1;
+                printf("second code character not digit\n");
+            }
+            else if (!isdigit(kod[2])) {
+                error = 1;
+                printf("third code charcater not digit\n");
+            }
+            else if (strcmp(var, "UP") != 0) {
+                if (strcmp(var, "PP") != 0) {
+                    if (strcmp(var, "UD") != 0) {
+                        if (strcmp(var, "PD") != 0) {
+                            error = 1;
+                            printf("wrong presentation type\n");
+                        }
+                    }
+                }
+            }
+            else if (_hours > 23 || _minutes > 59) {
+                error = 1;
+                printf("wrong time format\n");
+            }
+            else if (_month > 12 || _day > 31) {
+                error = 1;
+                printf("wrong date format\n");
             }
 
-            return line;
-
-
-           
-            
+            if(error == 0) {
+                int current_symbol = 0; int xd = 0;
+                for (int i = 0; i < blocks; i++) {
+                    if (current_symbol < symbols) {
+                        if (strcmp(rodni[i], ch) == 0) {
+                            xd++;
+                        }
+                        for (int l = 0; l < strlen(names[i]); l++) {
+                            result_line[current_symbol] = names[i][l];
+                            current_symbol++;
+                        }
+                        result_line[current_symbol] = '.'; current_symbol++;
+                        for (int l = 0; l < strlen(rodni[i]); l++) {
+                            result_line[current_symbol] = rodni[i][l];
+                            current_symbol++;
+                        }
+                        result_line[current_symbol] = '.'; current_symbol++;
+                        if (xd!= choise) {
+                            
+                            for (int l = 0; l < 3; l++) {
+                                result_line[current_symbol] = kodes[i][l];
+                                current_symbol++;
+                            }
+                        }
+                        else {
+                            for (int l = 0; l < 3; l++) {
+                                result_line[current_symbol] = kod[l];
+                                current_symbol++;
+                            }
+                        }
+                        result_line[current_symbol] = '.'; current_symbol++;
+                        for (int l = 0; l < strlen(jobs[i]); l++) {
+                            result_line[current_symbol] = jobs[i][l];
+                            current_symbol++;
+                        }
+                        result_line[current_symbol] = '.'; current_symbol++;
+                        for (int l = 0; l < strlen(stuff[i]); l++) {
+                            result_line[current_symbol] = stuff[i][l];
+                            current_symbol++;
+                        }
+                        result_line[current_symbol] = '.'; current_symbol++;
+                        if (xd != choise) {
+                            for (int l = 0; l < 2; l++) {
+                                result_line[current_symbol] = vars[i][l];
+                                current_symbol++;
+                            }
+                        }
+                        else {
+                            for (int l = 0; l < 2; l++) {
+                                result_line[current_symbol] = var[l];
+                                current_symbol++;
+                            }
+                        }
+                        result_line[current_symbol] = '.'; current_symbol++;
+                        if (xd != choise) {
+                            for (int l = 0; l < 4; l++) {
+                                result_line[current_symbol] = times[i][l];
+                                current_symbol++;
+                            }
+                        }
+                        else {
+                            for (int l = 0; l < 4; l++) {
+                                result_line[current_symbol] = time[l];
+                                current_symbol++;
+                            }
+                        }
+                        result_line[current_symbol] = '.'; current_symbol++;
+                        if (xd != choise) {
+                            for (int l = 0; l < 8; l++) {
+                                result_line[current_symbol] = dates[i][l];
+                                current_symbol++;
+                            }
+                        }
+                        else {
+                            for (int l = 0; l < 8; l++) {
+                                result_line[current_symbol] = date[l];
+                                current_symbol++;
+                            }
+                        }
+                        if (symbols - current_symbol > 5) {
+                            result_line[current_symbol] = '/'; current_symbol++;
+                        }
+                        
+                    }
+                    
+                }
+                printf("Modified successfuly\n");
+                return result_line;
+            }
+            else {
+                printf("Wrong input\n");
+                return line;
+            }
         }
     }
-
-
 }
 
 void h(int _n, int symbols, char line[])
@@ -803,6 +927,7 @@ void h(int _n, int symbols, char line[])
         }
     }
 }
+
 int main()
 {
     FILE* subor = fopen("konferencny_zoznam.txt", "r");
@@ -822,7 +947,7 @@ int main()
 
         if (command == 'v')
         {
-            system("cls");
+           // system("cls");
             v(_n, &opened, &subor, &lines_counter, &symbol_counter, line, symbols);
             printf("\n");
         }
