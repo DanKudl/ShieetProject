@@ -898,30 +898,101 @@ char* p(int opened, int n, int symbols, char line[], int lines_count) {
 void h(int _n, int symbols, char line[])
 {
     if (_n == 0) {
-        printf("Polia nie su vitvorene!\n");
+        printf("Polia nie su vytvorene!\n");
         return;
     }
     else {
-        char rcislo[4];
-        char group[2];
+        int rcislo[4];
+        rcislo[3] ='\0';
+        char group[3];
+        group[2] = '\0';
         int daname = 1, j = 0;
-        int age1 = 0, age2 = 9;
+        int age1;
+        int age2;
         int groupUP = 0, groupUD = 0, groupPP = 0, groupPD = 0;
-        printf("Muzi\t\tUP\tUD\tPP\tPD\n");
+        printf("GAY \t\tUP\tUD\tPP\tPD\n");
         for (int t = 0; t < 10; t++)
         {
+            age1 = 1;
+            age2 = 4;
+            for (int i = 0; i < symbols; i++) {
+                if (line[i] == '/') daname = 1;
+                else if (line[i] == '.') daname++;
+                else {
+
+                    if (daname == 2) {
+                        rcislo[j] = line[i];
+                        j++;
+                    }
+                    if (rcislo[2] > '1') {
+                        if (daname == 6) {
+                            group[j] = line[i];
+                            j++;
+                        }if (strcmp(group, "UP") == 0) groupUP++;
+                        else if (strcmp(group, "UD") == 0) groupUD++;
+                        else if (strcmp(group, "PP") == 0) groupPP++;
+                        else if (strcmp(group, "PD") == 0) groupPD++;
+
+                    }
+                }
+            }
+            printf("%dr - %dr:\t%d\t%d\t%d\t%d\n", age1, age2, groupUP, groupUD, groupPP, groupPD);
+            groupUP = 0; groupUD = 0; groupPP = 0; groupPD = 0;
+        }
+        printf("Muzi\t\tUP\tUD\tPP\tPD\n");
+
+        for (int t = 0; t < 10; t++) {
             age1 = t * 10;
             age2 = age1 + 9;
             for (int i = 0; i < symbols; i++) {
                 if (line[i] == '/') daname = 1;
                 else if (line[i] == '.') daname++;
                 else {
-                    if (daname == 2)
+
+                    if (daname == 2) {
                         rcislo[j] = line[i];
-                    j++;
+                        j++;
+                    }
+                    if (rcislo[2] > '1') {
+                        if (daname == 6) {
+                            group[j] = line[i];
+                            j++;
+                        }if (strcmp(group, "UP") == 0) groupUP++;
+                        else if (strcmp(group, "UD") == 0) groupUD++;
+                        else if (strcmp(group, "PP") == 0) groupPP++;
+                        else if (strcmp(group, "PD") == 0) groupPD++;
+
+                    }
                 }
             }
+            printf("%dr - %dr:\t%d\t%d\t%d\t%d\n", age1, age2, groupUP, groupUD, groupPP, groupPD);
+            groupUP = 0; groupUD = 0; groupPP = 0; groupPD = 0;
+        }
+        printf("\nZeni\t\tUP\tUD\tPP\tPD\n");
+        for (int t = 0; t < 10; t++) {
+            age1 = t * 10;
+            age2 = age1 + 9;
+            for (int i = 0; i < symbols; i++) {
+                if (line[i] == '/') daname = 1;
+                else if (line[i] == '.') daname++;
+                else {
 
+                    if (daname == 2) {
+                        rcislo[j] = line[i];
+                        j++;
+                    }
+                    if (rcislo[2] > '1') {
+                        if (daname == 6) {
+                            group[j] = line[i];
+                            j++;
+                        }if (strcmp(group, "UP") == 0) groupUP++;
+                        else if (strcmp(group, "UD") == 0) groupUD++;
+                        else if (strcmp(group, "PP") == 0) groupPP++;
+                        else if (strcmp(group, "PD") == 0) groupPD++;
+
+                    }
+                }
+            }
             printf("%dr - %dr:\t%d\t%d\t%d\t%d\n", age1, age2, groupUP, groupUD, groupPP, groupPD);
             groupUP = 0; groupUD = 0; groupPP = 0; groupPD = 0;
         }
