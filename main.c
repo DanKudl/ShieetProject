@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 
-int v(int n, int* opened, FILE * *origin_file, int* lines_count, int* symbol_count, char line[], int symbols) {
+int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_count, char line[], int symbols) {
 
     FILE* arrayViewFile = fopen("arrayViewFile.txt", "w");
     FILE* local_subor;
@@ -77,7 +77,7 @@ int v(int n, int* opened, FILE * *origin_file, int* lines_count, int* symbol_cou
                     year = 0; month = 0; day = 0;
 
                     //sleduyushii ryad
-                    i++; 
+                    i++;
                     if (i == 9) {
                         i = 1;
                         chn = getc(local_subor);
@@ -317,31 +317,31 @@ int v(int n, int* opened, FILE * *origin_file, int* lines_count, int* symbol_cou
         return 0;
     }
     else {
-    int nazov = 1;
-    if (line != NULL) {
-        printf("Prezenter:                   ");
-        //printf("Output from dyynamic array\n");
-        for (int i = 0; i < symbols; i++) {
-            if (line[i] == '/') {
-                printf("\n\n");
-                nazov = 1;
-                printf("Prezenter:                   ");
+        int nazov = 1;
+        if (line != NULL) {
+            printf("Prezenter:                   ");
+            //printf("Output from dyynamic array\n");
+            for (int i = 0; i < symbols; i++) {
+                if (line[i] == '/') {
+                    printf("\n\n");
+                    nazov = 1;
+                    printf("Prezenter:                   ");
+                }
+                else if (line[i] == '.') {
+                    printf("\n");
+                    nazov++;
+                    if (nazov == 2) printf("Rodne cislo:                 ");
+                    else if (nazov == 3) printf("Kod prezentacnej miestnosti: ");
+                    else if (nazov == 4) printf("Nazov prispevku:             ");
+                    else if (nazov == 5) printf("Mena autorov:                ");
+                    else if (nazov == 6) printf("Typ prezentovania:           ");
+                    else if (nazov == 7) printf("Cas prezentovania:           ");
+                    else if (nazov == 8) printf("Datum:                       ");
+                }
+                else printf("%c", line[i]);
             }
-            else if (line[i] == '.') {
-                printf("\n");
-                nazov++;
-                if (nazov == 2) printf("Rodne cislo:                 ");
-                else if (nazov == 3) printf("Kod prezentacnej miestnosti: ");
-                else if (nazov == 4) printf("Nazov prispevku:             ");
-                else if (nazov == 5) printf("Mena autorov:                ");
-                else if (nazov == 6) printf("Typ prezentovania:           ");
-                else if (nazov == 7) printf("Cas prezentovania:           ");
-                else if (nazov == 8) printf("Datum:                       ");
-            }
-            else printf("%c", line[i]);
         }
-    }
-    return 0;
+        return 0;
     }
 }
 
@@ -402,166 +402,163 @@ void o(int n, int opened, char line[], FILE* file, int lines_count) {
         }
         char** names = (char**)calloc(blocks, sizeof(char*));
         for (int i = 0; i < blocks; i++) {
-            names[i] = (char*)calloc(150, sizeof(char));
+            names[i] = (char*)calloc(50, sizeof(char));
         }
         char** jobs = (char**)calloc(blocks, sizeof(char*));
         for (int i = 0; i < blocks; i++) {
             jobs[i] = (char*)calloc(200, sizeof(char));
         }
 
-        if (n == 1) {
-            //vivod so stroki
 
+        //vivod s faila
+        if (file == NULL) {
+            printf("Neotvoreny subor\n");
         }
         else {
-            //vivod s faila
-            if (file == NULL) {
-                printf("Neotvoreny subor\n");
-            }
-            else {
-                rewind(file);
-                char current_line[200];
+            rewind(file);
+            char current_line[200];
+            fgets(current_line, 200, file);
+            int line_number = 0, block_number = 0;
+            //filling arrays
+
+            do {
+                if (line_number == 9) {
+                    line_number = 0;
+                    block_number++;
+                }
+
+                if (line_number == 0) {
+                    //name
+                    current_line[strlen(current_line) - 1] = NULL;
+                    strcpy(names[block_number], current_line);
+                }
+                else if (line_number == 2) {
+                    //kod
+                    current_line[3] = NULL;
+                    strcpy(kodes[block_number], current_line);
+                }
+                else if (line_number == 3) {
+                    //job
+                    current_line[strlen(current_line) - 1] = NULL;
+                    strcpy(jobs[block_number], current_line);
+                }
+                else if (line_number == 5) {
+                    //tam gde 4 varianta
+                    current_line[2] = NULL;
+                    strcpy(vars[block_number], current_line);
+                }
+                else if (line_number == 6) {
+                    //time
+                    times[block_number] = atoi(current_line);
+                }
+                else if (line_number == 7) {
+                    //date
+                    dates[block_number] = atoi(current_line);//filtering
+                }
+
                 fgets(current_line, 200, file);
-                int line_number = 0, block_number = 0;
-                //filling arrays
+                line_number++;
+            } while (!feof(file));
+            //last line as date
+            dates[blocks - 1] = atoi(current_line);
 
-                do {
-                    if (line_number == 9) {
-                        line_number = 0;
-                        block_number++;
+            //filtering
+            int finded = 0;
+            int temp1, temp2;
+            for (int i = 0; i < blocks; i++) {
+                if (dates[i] == date && (strcmp(kodes[i], kod) == 0)) {
+                    temp1 = dates[i], temp2 = times[i];
+                    char* temmp1 = kodes[i];
+                    char* temmp2 = vars[i];
+                    char* temmp3 = names[i];
+                    char* temmp4 = jobs[i];
+                    dates[i] = dates[finded];
+                    times[i] = times[finded];
+                    kodes[i] = kodes[finded];
+                    vars[i] = vars[finded];
+                    names[i] = names[finded];
+                    jobs[i] = jobs[finded];
+                    dates[finded] = temp1;
+                    times[finded] = temp2;
+                    kodes[finded] = temmp1;
+                    vars[finded] = temmp2;
+                    names[finded] = temmp3;
+                    jobs[finded] = temmp4;
+
+                    finded++;
+                }
+            }
+
+            if (finded != 0) {
+                int min = times[0], min_j = 0;
+                for (int i = 0; i < finded - 1; i++) {
+                    min = times[i], min_j = i;
+                    for (int j = i; j < finded; j++) {
+                        if (times[j] < min) {
+                            min_j = j;
+                            min = times[j];
+                        }
                     }
 
-                    if (line_number == 0) {
-                        //name
-                        current_line[strlen(current_line) - 1] = NULL;
-                        strcpy(names[block_number], current_line);
-                    }
-                    else if (line_number == 2) {
-                        //kod
-                        current_line[3] = NULL;
-                        strcpy(kodes[block_number], current_line);
-                    }
-                    else if (line_number == 3) {
-                        //job
-                        current_line[strlen(current_line) - 1] = NULL;
-                        strcpy(jobs[block_number], current_line);
-                    }
-                    else if (line_number == 5) {
-                        //tam gde 4 varianta
-                        current_line[2] = NULL;
-                        strcpy(vars[block_number], current_line);
-                    }
-                    else if (line_number == 6) {
-                        //time
-                        times[block_number] = atoi(current_line);
-                    }
-                    else if (line_number == 7) {
-                        //date
-                        dates[block_number] = atoi(current_line);//filtering
-                    }
-
-                    fgets(current_line, 200, file);
-                    line_number++;
-                } while (!feof(file));
-                //last line as date
-                dates[blocks - 1] = atoi(current_line);
-
-                //filtering
-                int finded = 0;
-                int temp1, temp2;
-                for (int i = 0; i < blocks; i++) {
-                    if (dates[i] == date && (strcmp(kodes[i], kod) == 0)) {
+                    if (i != min_j) {
+                        //swap
                         temp1 = dates[i], temp2 = times[i];
                         char* temmp1 = kodes[i];
                         char* temmp2 = vars[i];
                         char* temmp3 = names[i];
                         char* temmp4 = jobs[i];
-                        dates[i] = dates[finded];
-                        times[i] = times[finded];
-                        kodes[i] = kodes[finded];
-                        vars[i] = vars[finded];
-                        names[i] = names[finded];
-                        jobs[i] = jobs[finded];
-                        dates[finded] = temp1;
-                        times[finded] = temp2;
-                        kodes[finded] = temmp1;
-                        vars[finded] = temmp2;
-                        names[finded] = temmp3;
-                        jobs[finded] = temmp4;
-
-                        finded++;
+                        dates[i] = dates[min_j];
+                        times[i] = times[min_j];
+                        kodes[i] = kodes[min_j];
+                        vars[i] = vars[min_j];
+                        names[i] = names[min_j];
+                        jobs[i] = jobs[min_j];
+                        dates[min_j] = temp1;
+                        times[min_j] = temp2;
+                        kodes[min_j] = temmp1;
+                        vars[min_j] = temmp2;
+                        names[min_j] = temmp3;
+                        jobs[min_j] = temmp4;
                     }
                 }
 
-                if (finded != 0) {
-                    int min = times[0], min_j = 0;
-                    for (int i = 0; i < finded - 1; i++) {
-                        min = times[i], min_j = i;
-                        for (int j = i; j < finded; j++) {
-                            if (times[j] < min) {
-                                min_j = j;
-                                min = times[j];
-                            }
+
+
+                //output
+                //for U first
+                for (int i = 0; i < finded; i++) {
+                    if (vars[i][0] == 'U') {
+                        if (times[i] < 1000) {
+                            printf("0");
                         }
 
-                        if (i != min_j) {
-                            //swap
-                            temp1 = dates[i], temp2 = times[i];
-                            char* temmp1 = kodes[i];
-                            char* temmp2 = vars[i];
-                            char* temmp3 = names[i];
-                            char* temmp4 = jobs[i];
-                            dates[i] = dates[min_j];
-                            times[i] = times[min_j];
-                            kodes[i] = kodes[min_j];
-                            vars[i] = vars[min_j];
-                            names[i] = names[min_j];
-                            jobs[i] = jobs[min_j];
-                            dates[min_j] = temp1;
-                            times[min_j] = temp2;
-                            kodes[min_j] = temmp1;
-                            vars[min_j] = temmp2;
-                            names[min_j] = temmp3;
-                            jobs[min_j] = temmp4;
-                        }
-                    }
-
-
-
-                    //output
-                    //for U first
-                    for (int i = 0; i < finded; i++) {
-                        if (vars[i][0] == 'U') {
-                            if (times[i] < 1000) {
-                                printf("0");
-                            }
-
-                            printf("%d %s\t%s\t %s\n", times[i], vars[i], names[i], jobs[i]);
-                            if (i == finded - 1) printf("\n");
-                        }
-                    }
-                    //for P first
-                    for (int i = 0; i < finded; i++) {
-                        if (vars[i][0] == 'P') {
-                            if (times[i] < 1000) {
-                                printf("0");
-                            }
-
-                            printf("%d %s\t%s\t %s\n", times[i], vars[i], names[i], jobs[i]);
-                        }
+                        printf("%d %s\t%s\t %s\n", times[i], vars[i], names[i], jobs[i]);
+                        if (i == finded - 1) printf("\n");
                     }
                 }
-                else {
-                    printf("No elements finded\n");
+                //for P first
+                for (int i = 0; i < finded; i++) {
+                    if (vars[i][0] == 'P') {
+                        if (times[i] < 1000) {
+                            printf("0");
+                        }
+
+                        printf("%d %s\t%s\t %s\n", times[i], vars[i], names[i], jobs[i]);
+                    }
                 }
             }
-
+            else {
+                printf("No elements finded\n");
+            }
         }
+
+
     }
     else {
         printf("No file opened yet, write v to open file\n");
     }
 }
+
 void s(int opened, int n, char line[], int symbols)
 {
     if (opened == 0) {
@@ -636,7 +633,7 @@ void s(int opened, int n, char line[], int symbols)
                         j++;
                     }
                     else if (dot_num == 7) {
-                        
+
                         time[j] = line[i];
                         j++;
                     }
@@ -657,6 +654,155 @@ void s(int opened, int n, char line[], int symbols)
     }
 }
 
+char* p(int opened, int n, int symbols, char line[], int lines_count) {
+
+    if (opened == 0) {
+        printf("Neotvoreny subor!\n");
+        return;
+    }
+    else {
+        if (n == 0) {
+            printf("Polia nie su vytvorene\n");
+            return;
+        }
+        else {
+            printf("line :\n%s\n\n", line);//delete then
+
+            char chislo[10];
+            scanf("%s", chislo);
+            //searching for right blocks
+
+            int blocks = (lines_count + 1) / 9;
+            char** names = (char**)calloc(blocks, sizeof(char*));
+            for (int i = 0; i < blocks; i++) {
+                names[i] = (char*)calloc(50, sizeof(char));
+            }
+            char** rodni = (char**)calloc(blocks, sizeof(char*));
+            for (int i = 0; i < blocks; i++) {
+                rodni[i] = (char*)calloc(10, sizeof(char));
+            }
+            char** kodes = (char**)calloc(blocks, sizeof(char*));
+            for (int i = 0; i < blocks; i++) {
+                kodes[i] = (char*)calloc(3, sizeof(char));
+            }
+            char** jobs = (char**)calloc(blocks, sizeof(char*));
+            for (int i = 0; i < blocks; i++) {
+                jobs[i] = (char*)calloc(200, sizeof(char));
+            }
+            char** vars = (char**)calloc(blocks, sizeof(char*));
+            for (int i = 0; i < blocks; i++) {
+                vars[i] = (char*)calloc(2, sizeof(char));
+            }
+            char** times = (char**)calloc(blocks, sizeof(char*));
+            for (int i = 0; i < blocks; i++) {
+                times[i] = (char*)calloc(4, sizeof(char));
+            }
+            char** dates = (char**)calloc(blocks, sizeof(char*));
+            for (int i = 0; i < blocks; i++) {
+                dates[i] = (char*)calloc(8, sizeof(char));
+            }
+            
+
+            int current_block = 0, j = 0, dot_pos = 1;
+            for (int i = 0; i < symbols; i++) {
+                if (line[i] == '/') {
+                    current_block++;
+                    j = 0;
+                    dot_pos = 1;
+                }
+                else if(line[i] == '.') {
+                    dot_pos++;
+                    j = 0;
+                }
+                else {
+                    if (dot_pos == 1) {
+                        names[current_block][j] = line[i]; j++;
+                    }
+                    else if (dot_pos == 2) {
+                        rodni[current_block][j] = line[i]; j++;
+                    }
+                    else if (dot_pos == 3) {
+                        kodes[current_block][j] = line[i]; j++;
+                    }
+                    else if (dot_pos == 4) {
+                        jobs[current_block][j] = line[i]; j++;
+                    }
+                    else if (dot_pos == 6) {
+                        vars[current_block][j] = line[i]; j++;
+                    }
+                    else if (dot_pos == 7) {
+                        times[current_block][j] = line[i]; j++;
+                    }
+                    else if (dot_pos == 8) {
+                        dates[current_block][j] = line[i]; j++;
+                    }
+                }
+            }
+            int counter = 1;
+            for (int i = 0; i < blocks; i++) {
+                if (strcmp(rodni[i], chislo) == 0) {
+                    printf("%d\t%s\t %s\n", counter, names[i], jobs[i]);
+                    counter++;
+                }
+            }
+            if (counter == 1) {
+                printf("Nothing found\n");
+                return line;
+            }
+
+            char* result_line = (char*)calloc(strlen(line), sizeof(char));
+
+            int choise; char kod[3]; char var[2]; char time[4]; char date[8];
+            scanf("%d %s %s %s %s", &choise, kod, var, time, date);
+
+            if(isalpha(kod[0]) && isupper(kod[0]) && isdigit(kod[1]) && isdigit(kod[2]) &&
+                ((strcmp(var, "UP") == 0 || (strcmp(var, "PP") == 0 || (strcmp(var, "PD") == 0 || (strcmp(var, "UD") == 0)))))) {
+                printf("pizda");
+            }
+
+            return line;
+
+
+           
+            
+        }
+    }
+
+
+}
+
+void h(int _n, int symbols, char line[])
+{
+    if (_n == 0) {
+        printf("Polia nie su vitvorene!\n");
+        return;
+    }
+    else {
+        char rcislo[4];
+        char group[2];
+        int daname = 1, j = 0;
+        int age1 = 0, age2 = 9;
+        int groupUP = 0, groupUD = 0, groupPP = 0, groupPD = 0;
+        printf("Muzi\t\tUP\tUD\tPP\tPD\n");
+        for (int t = 0; t < 10; t++)
+        {
+            age1 = t * 10;
+            age2 = age1 + 9;
+            for (int i = 0; i < symbols; i++) {
+                if (line[i] == '/') daname = 1;
+                else if (line[i] == '.') daname++;
+                else {
+                    if (daname == 2)
+                        rcislo[j] = line[i];
+                    j++;
+                }
+            }
+
+            printf("%dr - %dr:\t%d\t%d\t%d\t%d\n", age1, age2, groupUP, groupUD, groupPP, groupPD);
+            groupUP = 0; groupUD = 0; groupPP = 0; groupPD = 0;
+        }
+    }
+}
 int main()
 {
     FILE* subor = fopen("konferencny_zoznam.txt", "r");
@@ -680,35 +826,32 @@ int main()
             v(_n, &opened, &subor, &lines_counter, &symbol_counter, line, symbols);
             printf("\n");
         }
-
-        if (command == 'n') {
+        else if (command == 'n') {
             if (opened == 1) {
-                system("cls");
                 line = (char*)realloc(line, symbol_counter);
                 line = n(symbol_counter, &_n);
 
             }
             else {
-                system("cls");
                 printf("No file opened yet, write v to open file\n");
             }
         }
-
-        if (command == 'k')
+        else if (command == 'k')
         {
             free(line);
             return 0;
         }
-        if (command == 'o') {
-            system("cls");
+        else if (command == 'o') {
             o(_n, opened, line, subor, lines_counter);
         }
-        if (command == 's') {
-            system("cls");
-            s(opened, n, line, symbols);
+        else if (command == 's') {
+            s(opened, _n, line, symbols);
         }
-        if (command == 'x' && opened != 0) {
-            // x(lines, lines_counter);
+        else if (command == 'p') {
+            line = p(opened, _n, symbols, line, lines_counter);
+        }
+        else if (command == 'h') {
+            h(_n, symbols, line);
         }
     } while (1);
     fclose(subor);
