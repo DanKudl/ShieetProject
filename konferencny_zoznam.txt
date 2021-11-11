@@ -1,5 +1,5 @@
 Jozko Mrkvicka
-9403133410
+9807109081
 A11
 Deep learning
 Jozko Mrkvicka
@@ -8,7 +8,7 @@ UP
 20200205
 
 Jana Mrkvickova
-9458133410
+0209262911
 A11
 Cloud computing
 Jana Mrkvickova#Jozko Mrkvicka
@@ -17,7 +17,7 @@ UD
 20200405
 
 Jan Oriesok
-9403133421
+8104205802
 A11
 Metody inspirovane prirodou
 Jan Oriesok#Jozko Mrkvicka
@@ -26,7 +26,7 @@ UP
 20200405
 
 Jozko Mrkvicka
-9403133410
+7306253856
 A11
 Spracovanie obrazu
 Jozko Mrkvicka
@@ -35,7 +35,7 @@ UP
 20200405
 
 Jozko Mrkvicka
-9403133410
+370718434
 A21
 Spracovanie obrazu
 Jozko Mrkvicka
@@ -44,10 +44,64 @@ PP
 20200405
 
 Jana Oriesokova
-9458133432
+370718434
 A21
 Metody inspirovane prirodou (2)
 Jana Oriesokova#Jan Oriesok#Jozko Mrkvicka
 PD
 1520
-20200412
+20200405
+
+Jozko Mrkvicka
+0155243099
+A11
+Deep learning
+Jozko Mrkvicka
+UP
+1120
+20200205
+
+Jana Mrkvickova
+0155243099
+A11
+Cloud computing
+Jana Mrkvickova#Jozko Mrkvicka
+UD
+0730
+20200405
+
+Jan Oriesok
+455619869
+A11
+Metody inspirovane prirodou
+Jan Oriesok#Jozko Mrkvicka
+UP
+1520
+20200405
+
+Jozko Mrkvicka
+7862178049
+A11
+Spracovanie obrazu
+Jozko Mrkvicka
+UP
+1140
+20200405
+
+Jozko Mrkvicka
+6252032721
+A21
+Spracovanie obrazu
+Jozko Mrkvicka
+PP
+1200
+20200405
+
+Jana Oriesokova
+8452276415
+A21
+Metody inspirovane prirodou (2)
+Jana Oriesokova#Jan Oriesok#Jozko Mrkvicka
+PD
+1520
+20200405
