@@ -8,13 +8,13 @@
 
 int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_count, char line[], int symbols) {
 
-    FILE* arrayViewFile = fopen("arrayViewFile.txt", "w");
-    FILE* local_subor;
-    if (n == 0) {
+    FILE* arrayViewFile = fopen("arrayViewFile.txt", "w");                                      //zavedieme a otvorime FILE pre zapis udajov dinamickych polia 
+    FILE* local_subor;                                                                          //zavedieme FILE pre konferencny zoznam
+    if (n == 0) {                                                                               //ak n este ne bolo stlacene d'alej bude overenie udajov a vypis s suboru
         local_subor = fopen("konferencny_zoznam.txt", "r");
-        if (local_subor == NULL)
+        if (local_subor == NULL)                                                                //ak subor nepodari otvorit vipise spravu,odriadkuje a ukonci funkciu
         {
-            printf("Neotvoreny subor(ne otkrilos)\n");
+            printf("Neotvoreny subor\n");
             return 1;
         }
         else if (local_subor != NULL)
@@ -23,60 +23,60 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
             *origin_file = local_subor;
 
             int ryad = 1;
-            //check all the stuffffff
+            //overime kazdy ret'azec, zavedieme premmenny pre overenie
             int i = 1, errors = 0, counter = 0, plus = 0;
             int number2chet = 0, number2nechet = 0;
             char symb6;
             int hours = 0, minutes = 0;
             int year = 0, month = 0, day = 0;
             char chn = getc(local_subor);
-            while (chn != EOF) { //&& errors == 0
+            while (chn != EOF) {                                                        //&& errors == 0
                 if (chn == '\n') {
                     ryad++;
-                    //errors check esli malo symvolov
+                    //overenie udajov na chybu symbolov, kde i - cislo ret'azca kazdeho bloku(i = 1 - prezentor; i=2 - rodne cislo a tak dalej)
                     if (i == 2) {
                         if (counter < 10) {
                             errors = 2;
-                            printf("Error line %d, < 10 symbols\n", ryad);
+                            printf("%d. Nekorektne zadany vstup: rodne cislo\n", ryad);
 
                         }
                     }
                     else if (i == 3) {
                         if (counter < 3) {
                             errors = 3;
-                            printf("Error line %d, < 3 symbols\n", ryad);
+                            printf("%d. Nekorektne zadany vstup: kod prezentacnej miestmosti\n", ryad);
 
                         }
                     }
                     else if (i == 6) {
                         if (counter < 2) {
                             errors = 6;
-                            printf("Error line %d, < 2 symbols\n", ryad);
+                            printf("%d. Nekorektne zadany vstup: typ prezentovania\n", ryad);
 
                         }
                     }
                     else if (i == 7) {
                         if (counter < 3) {
                             errors = 7;
-                            printf("Error line %d, < 4 symbols\n", ryad);
+                            printf("%d. Nekorektne zadany vstup: cas\n", ryad);
 
                         }
                     }
                     else if (i == 8) {
                         if (counter < 7) {
                             errors = 8;
-                            printf("Error line %d, < 8 symbols\n", ryad);
+                            printf("%d. Nekorektne zadany vstup: datum\n", ryad);
 
                         }
                     }
 
-                    //obnulenie
+                    //nulovanie premmenych 
                     counter = 0;
                     number2chet = 0; number2nechet = 0;
                     hours = 0; minutes = 0;
                     year = 0; month = 0; day = 0;
 
-                    //sleduyushii ryad
+                    //nasledujuci blok udajov(ryad = cislo riadka)
                     i++;
                     if (i == 9) {
                         i = 1;
@@ -87,21 +87,21 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
                 else {
                     if (i == 1) {
 
-                        if ((!isalpha(chn) && chn != ' ')) {
+                        if ((!isalpha(chn) && chn != ' ')) {                            //pouzijeme isalpha, isdigit pre overenie na cislo alebo na list 
                             errors = 1;
-                            printf("Error line %d, spec simvol v imeni\n", ryad);
+                            printf("%d. Nekorektne zadany vstup: meno\n", ryad);
 
                         }
-                        if (counter >= 50) {
+                        if (counter >= 50) {                                            //counter zvazuje kolko bolo charov v riadku
                             errors = 1;
-                            printf("Error line %d, name > 50 symbols\n", ryad);
+                            printf("%d. Nekorektne zadany vstup: rodne meno\n", ryad);
 
                         }
                     }
                     else if (i == 2) {
                         if (!isdigit(chn) && chn != '\n') {
                             errors = 2;
-                            printf("Error line %d, bad symbol %c\n", ryad, chn);
+                            printf("%d. Nekorektne zadany vstup: rodne cislo\n", ryad);
 
                         }
                         else {
@@ -123,14 +123,14 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
 
                                 if (number2chet != number2nechet && abs(number2chet - number2nechet) != 11) {
                                     errors = 2;
-                                    printf("Error line %d, numb%11!=0\n", ryad);
+                                    printf("%d. Nekorektne zadany vstup: rodne cislo\n", ryad);
 
                                 }
                             }
                         }
                         if (counter > 9) {
                             errors = 2;
-                            printf("Error line %d, > 10 numbers\n", ryad);
+                            printf("%d. Nekorektne zadany vstup: rodne cislo\n", ryad);
 
                         }
                     }
@@ -139,60 +139,61 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
                             if (isalpha(chn)) {
                                 if (!isupper(chn)) {
                                     errors = 3;
-                                    printf("Error line %d, symbol %c isnt upper\n", ryad, chn);
+                                    printf("%d. Nekorektne zadany vstup: kod prezentacnej miestnosti\n", ryad);
 
                                 }
                             }
                         }
                         else {
                             errors = 3;
-                            printf("Error line %d, > 3 symbols\n", ryad);
+                            printf("%d. Nekorektne zadany vstup: kod prezentacnej miestnosti\n", ryad);
 
                         }
                     }
                     else if (i == 4) {
                         if (counter > 149) {
                             errors = 4;
-                            printf("Error line %d, > 150 symbols\n", ryad);
+                            printf("%d. Nekorektne zadany vstup: nazov prispevku\n", ryad);
 
                         }
                     }
                     else if (i == 5) {
                         if (counter > 199) {
                             errors = 5;
-                            printf("Error line %d, > 200 symbols\n", ryad);
+                            printf("%d. Nekorektne zadany vstup: mena autorov\n", ryad);
 
                         }
                         if (!isalpha(chn) && chn != ' ' && chn != '#') {
                             errors = 5;
-                            printf("Error line %d, unexpected symbol %c\n", ryad, chn);
+                            printf("%d. Nekorektne zadany vstup: mena autorov\n", ryad);
 
                         }
                     }
                     else if (i == 6) {
-                        //PD, PP, UD, UP
+                        //overenie na patrenie do typov PD, PP, UD, UP
                         if (counter == 0) {
                             symb6 = chn;
                         }
                         else if (counter == 1) {
                             if ((symb6 == 'P' && chn == 'D') || (symb6 == 'P' && chn == 'P') || (symb6 == 'U' && chn == 'D') || (symb6 == 'U' && chn == 'P')) {
-                                //idk
+                                //skip
                             }
                             else {
                                 errors = 6;
-                                printf("Error line %d, wrong code (%c%c)\n", ryad, symb6, chn);
+                                printf("%d. Nekorektne zadany vstup: typ prezentovania\n", ryad);
                             }
                         }
                         else if (counter > 1) {
                             errors = 6;
-                            printf("Error line %d, > 2 symbols\n", ryad);
+                            printf("%d. Nekorektne zadany vstup: typ prezentovania\n", ryad);
 
                         }
                     }
+                    //overenie spravnosti casu
                     else if (i == 7) {
                         if (counter > 3) {
                             errors = 7;
-                            printf("Error line %d, > 4 symbols\n", ryad);
+                            printf("%d. Nekorektne zadany vstup: cas", ryad);
 
                         }
                         else {
@@ -208,21 +209,20 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
                             }
                             else if (counter == 3) {
                                 minutes += (chn - '0');
-
-                                //checks
                                 if (hours > 23 || minutes > 59) {
                                     errors = 7;
-                                    printf("Error line %d, wrong time format\n", ryad);
+                                    printf("%d. Nekorektne zadany vstup: cas\n", ryad);
 
                                 }
 
                             }
                         }
                     }
+                    //overenie spravnosti datuma
                     else if (i == 8) {
                         if (counter > 7) {
                             errors = 8;
-                            printf("Error line %d, > 8 symbols\n", ryad);
+                            printf("%d. Nekorektne zadany vstup: datum\n", ryad);
 
                         }
                         else {
@@ -252,7 +252,7 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
 
                                 if (day > 31 || month > 12) {
                                     errors = 8;
-                                    printf("Error line %d, wrong data format\n", ryad);
+                                    printf("%d. Nekorektne zadany vstup: datum\n", ryad);
 
                                 }
                             }
@@ -265,13 +265,13 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
 
 
 
-            //output
-            if (errors == 0) {
+            //vypis
+            if (errors == 0) {                                  //ak nemame chyb tak zacneme vypis, inak - vypiseme spravy o chybach
                 int symbols = 0;
                 *lines_count = ryad;
                 if ((ryad + 1) % 9 == 0) {
-                    //output from file
-                    printf("Prezenter:                   ");
+                    //vypis z subora
+                    printf("Prezenter:                   ");    //vypiseme najprv prezenter a d'alej cez cyclus vypiseme ret'azec a kazdy raz ak bude \n - odriadkujeme a vypiseme nasledujuci nazov udajov a udaj
                     i = 1;
                     rewind(local_subor);
                     char ch = getc(local_subor);
@@ -306,7 +306,6 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
                         }
                         ch = getc(local_subor);
                     }
-                    printf("\n\n\nOpened successfuly, %d lines readed\n\n", *lines_count);
                     *symbol_count = symbols;
                 }
             }
@@ -316,12 +315,12 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
         }
         return 0;
     }
-    else {
+    else {                                          //vypiseme udaje z dynamickych poli
         int nazov = 1;
         if (line != NULL) {
             printf("Prezenter:                   ");
-            //printf("Output from dyynamic array\n");
-            for (int i = 0; i < symbols; i++) {
+            //zavedieme premennu nazov ktora bude znamenat nazov typu udajov 
+            for (int i = 0; i < symbols; i++) {                     //cyclus pre nacitanie kazdeho chara a vypis udajov z poloziek ktory oddeleny bodkami a bloky budu oddeleni "/"
                 if (line[i] == '/') {
                     printf("\n\n");
                     nazov = 1;
@@ -347,13 +346,13 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
 
 char* n(int symbol_count, int* n_used)
 {
-    FILE* subor = fopen("konferencny_zoznam.txt", "r");
-    char* local_line = (char*)calloc(symbol_count, sizeof(char));
+    FILE* subor = fopen("konferencny_zoznam.txt", "r");                  //otvorime subor pre citanie 
+    char* local_line = (char*)calloc(symbol_count, sizeof(char));        //allokujeme panat cez calloc na velkost charov ktora zodpoveda poctu znakov precitanych zo suboru  
     int i = 1, first = 1, j = 0;
     char ch = getc(subor);
 
     while (ch != EOF && j < symbol_count) {
-        if (ch == '\n') {
+        if (ch == '\n') {                                                //ak znak sa rovna "\n" tak zmenime ho na bodku a ak sa rovna "\n\n" zmenime na "/"
             if (i != 8) {
                 char point = '.';
                 local_line[j] = point;
@@ -374,8 +373,7 @@ char* n(int symbol_count, int* n_used)
         }
         ch = getc(subor);
     }
-    *n_used = 1;
-    printf("%d symbols writed to dynamic array\n", symbol_count);
+    *n_used = 1;                             
     return local_line;
 }
 
@@ -388,29 +386,29 @@ void o(int n, int opened, char line[], FILE* file, int lines_count) {
 
         scanf("%d %s", &date, kod);
 
-        //choto delaem
+        //nacitame do premennych datum a kod miestnosti 
         int blocks = (lines_count + 1) / 9;
-        int* times = (int*)calloc(blocks, sizeof(int));
-        int* dates = (int*)calloc(blocks, sizeof(int));
+        int* times = (int*)calloc(blocks, sizeof(int));         //zavedieme dynamicky poli v ktorych bude udaje o datume a kodoch
+        int* dates = (int*)calloc(blocks, sizeof(int));         
         char** kodes = (char**)calloc(blocks, sizeof(char*));
         for (int i = 0; i < blocks; i++) {
             kodes[i] = (char*)calloc(3, sizeof(char));
         }
         char** vars = (char**)calloc(blocks, sizeof(char*));
         for (int i = 0; i < blocks; i++) {
-            vars[i] = (char*)calloc(2, sizeof(char));
+            vars[i] = (char*)calloc(2, sizeof(char));           //cyclus pre allokaciu pamati pre typ prezentovania
         }
         char** names = (char**)calloc(blocks, sizeof(char*));
         for (int i = 0; i < blocks; i++) {
-            names[i] = (char*)calloc(50, sizeof(char));
+            names[i] = (char*)calloc(50, sizeof(char));         //cyclus pre allokaciu pamati pre mena
         }
         char** jobs = (char**)calloc(blocks, sizeof(char*));
-        for (int i = 0; i < blocks; i++) {
+        for (int i = 0; i < blocks; i++) {                      //cyclus pre allokaciu pamati pre nazov prispevku
             jobs[i] = (char*)calloc(200, sizeof(char));
         }
 
 
-        //vivod s faila
+        //vypis z suboru
         if (file == NULL) {
             printf("Neotvoreny subor\n");
         }
@@ -419,54 +417,54 @@ void o(int n, int opened, char line[], FILE* file, int lines_count) {
             char current_line[200];
             fgets(current_line, 200, file);
             int line_number = 0, block_number = 0;
-            //filling arrays
+            //nacitanie udajov do poli
 
             do {
-                if (line_number == 9) {
+                if (line_number == 9) {                         //cyclus pre nacitanie udajov, v ktorom nevhodne ret'azce budeme preskakovat 
                     line_number = 0;
                     block_number++;
                 }
 
                 if (line_number == 0) {
-                    //name
-                    current_line[strlen(current_line) - 1] = NULL;
+                    //prvy retazec vypiseme ako meno
+                    current_line[strlen(current_line) - 1] = NULL;          //nacitame z suboru a kopirujeme do nasej premennej s menami
                     strcpy(names[block_number], current_line);
                 }
                 else if (line_number == 2) {
-                    //kod
+                    //treti retazec vypiseme ako kod prezentacnej miestnosti
                     current_line[3] = NULL;
                     strcpy(kodes[block_number], current_line);
                 }
                 else if (line_number == 3) {
-                    //job
+                    //stvrty vypiseme ako nazov prispevku
                     current_line[strlen(current_line) - 1] = NULL;
                     strcpy(jobs[block_number], current_line);
                 }
                 else if (line_number == 5) {
-                    //tam gde 4 varianta
+                    //siesty ako typ prezentovania 
                     current_line[2] = NULL;
                     strcpy(vars[block_number], current_line);
                 }
                 else if (line_number == 6) {
-                    //time
+                    //siedmy ako cas a prelozme ho do int
                     times[block_number] = atoi(current_line);
                 }
                 else if (line_number == 7) {
-                    //date
-                    dates[block_number] = atoi(current_line);//filtering
+                    //a osmy ako datum
+                    dates[block_number] = atoi(current_line);//prelozme chary datumov  do integerov 
                 }
 
                 fgets(current_line, 200, file);
                 line_number++;
             } while (!feof(file));
-            //last line as date
+            //posledny ret'azec vzdy bude datumom
             dates[blocks - 1] = atoi(current_line);
 
             //filtering
             int finded = 0;
             int temp1, temp2;
             for (int i = 0; i < blocks; i++) {
-                if (dates[i] == date && (strcmp(kodes[i], kod) == 0)) {
+                if (dates[i] == date && (strcmp(kodes[i], kod) == 0)) {             //zavedeme cyclus a podmienku a budeme prepisovat udaje z tych co sme nasli
                     temp1 = dates[i], temp2 = times[i];
                     char* temmp1 = kodes[i];
                     char* temmp2 = vars[i];
@@ -489,7 +487,7 @@ void o(int n, int opened, char line[], FILE* file, int lines_count) {
                 }
             }
 
-            if (finded != 0) {
+            if (finded != 0) {                                                  //triedime podla casu sposobom swap
                 int min = times[0], min_j = 0;
                 for (int i = 0; i < finded - 1; i++) {
                     min = times[i], min_j = i;
@@ -502,7 +500,7 @@ void o(int n, int opened, char line[], FILE* file, int lines_count) {
 
                     if (i != min_j) {
                         //swap
-                        temp1 = dates[i], temp2 = times[i];
+                        temp1 = dates[i], temp2 = times[i];         //menime premenny 
                         char* temmp1 = kodes[i];
                         char* temmp2 = vars[i];
                         char* temmp3 = names[i];
@@ -524,10 +522,10 @@ void o(int n, int opened, char line[], FILE* file, int lines_count) {
 
 
 
-                //output
-                //for U first
+                //vystup
+                //najprv pre U typy prezentovania
                 for (int i = 0; i < finded; i++) {
-                    if (vars[i][0] == 'U') {
+                    if (vars[i][0] == 'U') {                                    //
                         if (times[i] < 1000) {
                             printf("0");
                         }
@@ -536,7 +534,7 @@ void o(int n, int opened, char line[], FILE* file, int lines_count) {
                         if (i == finded - 1) printf("\n");
                     }
                 }
-                //for P first
+                //ak sme nasli P
                 for (int i = 0; i < finded; i++) {
                     if (vars[i][0] == 'P') {
                         if (times[i] < 1000) {
@@ -548,21 +546,21 @@ void o(int n, int opened, char line[], FILE* file, int lines_count) {
                 }
             }
             else {
-                printf("No elements finded\n");
+                printf("Nic sa nenaslo\n");
             }
         }
 
 
     }
     else {
-        printf("No file opened yet, write v to open file\n");
+        printf("Neotvoreny subor!\n");
     }
 }
 
 void s(int opened, int n, char line[], int symbols)
 {
     if (opened == 0) {
-        printf("Neotvoreny subor!\n");
+        printf("Neotvoreny subor!\n");         //zavedieme podmienky. ak este neotvorili subor alebo ne stlacili n tak funkcia vypise spravu a skonci
         return;
     }
     else {
@@ -571,31 +569,31 @@ void s(int opened, int n, char line[], int symbols)
             return;
         }
         else {
-            char datum[9];
-            char typ[2];
+            char datum[9];                                      //zavedieme polia pre premenny pre datum a typ prezentovania ktore budu na vstupe a nacitame do nych udaje
+            char typ[3];
             scanf("%s %s", datum, typ);
-            //searching for right blocks
+            //hladame vhodne bloky v dynamickych poli
 
             char date[8]; int date_l = 8;
-            char kod[2]; int kod_l = 2;
+            char kod[2]; int kod_l = 2;                     //zavedieme premenny pre udaje ktore bedeme nacitat z dynamickych poli
             char time[4]; int time_l = 4;
             char name[50]; int name_l = 0;
             char job[150]; int job_l = 0;
 
-            int dot_num = 1, j = 0, date_finded = 0, kod_finded = 0;
+            int dot_num = 1, j = 0, date_finded = 0, kod_finded = 0;   //a zavedieme premenny ktory ukazuju na status (ci sme nasli nieco alebo nie)
             int nothing_finded = 1;
 
-            for (int i = 0; i < symbols; i++) {
-                if (line[i] == '/' || i == symbols - 1) {
-                    j = 0;
+            for (int i = 0; i < symbols; i++) {                 //zavedieme cyclus ktory bude nacitat kazdy znak z dynamickych poli
+                if (line[i] == '/' || i == symbols - 1) {       //a ked cyclus najde bodku tak zvacsi premennu dot_num(ktora obsahuje nazov polozky)
+                    j = 0;                                      //a ked najde "/" tak obnuli dot_num(to bude znamenat ze sme presli prvy alebo nieaky vacsi blok udajov
                     dot_num = 1;
 
                     if (date_finded == 0 && kod_finded == 0) {
                         nothing_finded = 0;
                         for (int k = 0; k < time_l; k++) {
                             printf("%c", time[k]);
-                        }
-                        printf("  ");
+                        }                                          
+                        printf("  ");                               //v tejto casti bude vypis udajov z premennych ak sme nasli iba jeden vhodny variant 
                         for (int k = 0; k < name_l; k++) {
                             printf("%c", name[k]);
                         }
@@ -624,7 +622,7 @@ void s(int opened, int n, char line[], int symbols)
                         j++;
                     }
                     else if (dot_num == 4) {
-                        job[j] = line[i];
+                        job[j] = line[i];                       //ked dot nam bude ukazovat na vhodnu nam polozky tak budeme vypisovat z nej udaje do premennej
                         j++;
                     }
                     else if (dot_num == 6) {
@@ -647,7 +645,7 @@ void s(int opened, int n, char line[], int symbols)
 
             }
             if (nothing_finded == 1) {
-                printf("Nothing found\n");
+                printf("Pre dany vstup neexistuju zaznamy\n");                 //ak nic sa nenaslo - vypise spravu
             }
 
         }
@@ -667,14 +665,14 @@ char* p(int opened, int n, int symbols, char line[], int lines_count) {
         }
         else {
 
-            char chislo[10];
+            char chislo[10];                        //zavedieme premennu pre rodne cislo a nacitame ho zo vstupu
             scanf("%s", chislo);
-            //searching for right blocks
+            //dalej budeme hladat na bloky ktory patria vstupnemu rodnemu cislu
 
-            int blocks = (lines_count + 1) / 9;
+            int blocks = (lines_count + 1) / 9;                             //premenna blocks znamena cislo blokov v dinamickych poli
             char** names = (char**)calloc(blocks, sizeof(char*));
             for (int i = 0; i < blocks; i++) {
-                names[i] = (char*)calloc(50, sizeof(char));
+                names[i] = (char*)calloc(50, sizeof(char));                 //alokujeme pamat pre dynamicke polia(vsetkyrosne udaje: mena, rodne cisla a tak dalej) pre kazdy blok 
             }
             char** rodni = (char**)calloc(blocks, sizeof(char*));
             for (int i = 0; i < blocks; i++) {
@@ -704,21 +702,21 @@ char* p(int opened, int n, int symbols, char line[], int lines_count) {
             for (int i = 0; i < blocks; i++) {
                 dates[i] = (char*)calloc(8, sizeof(char));
             }
-            
+
             int current_block = 0, j = 0, dot_pos = 1;
             for (int i = 0; i < symbols; i++) {
                 if (line[i] == '/') {
-                    current_block++;
+                    current_block++;                //ak najdeme v dynamickych poli "/" tak presuneme sa na nasledujuci blok udajov
                     j = 0;
                     dot_pos = 1;
                 }
-                else if(line[i] == '.') {
+                else if (line[i] == '.') {         //a ak najdeme bodku tak presuneme sa na nasledujucu polozku
                     dot_pos++;
                     j = 0;
                 }
                 else {
                     if (dot_pos == 1) {
-                        names[current_block][j] = line[i]; j++;
+                        names[current_block][j] = line[i]; j++;     //pri nacitani znaka z dynamickych poli line[] budeme venovat cislo polozky(premenna dot_pos)
                     }
                     else if (dot_pos == 2) {
                         rodni[current_block][j] = line[i]; j++;
@@ -745,61 +743,74 @@ char* p(int opened, int n, int symbols, char line[], int lines_count) {
             }
             int counter = 1;
             for (int i = 0; i < blocks; i++) {
-                if (strcmp(rodni[i], chislo) == 0) {
-                    printf("%d\t%s\t %s\n", counter, names[i], jobs[i]);
+                if (strcmp(rodni[i], chislo) == 0) {                            //ak nacitane na vstupe rodne cislo a rodne cislo ktore nacitali z nieakoho bloku su rovnaky 
+                    printf("%d\t%s\t %s\n", counter, names[i], jobs[i]);        //tak vypiseme seriove cislo meno a naazov pripevku
                     counter++;
                 }
             }
             if (counter == 1) {
-                printf("Nothing found\n");
+                printf("Pre dany vstup neexistuju zaznamy\n");
                 return line;
             }
 
-            char* result_line = (char*)calloc(symbols, sizeof(char));
-            int choise; char kod[3]; char var[2]; char time[4]; char date[8]; char ch[10];strcpy(ch, chislo);
+            char* result_line = (char*)calloc(symbols, sizeof(char));       //zavedieme nove dynamicke pole na prepisanie udajov 
+            int choise; 
+            char kod[3]; 
+            char var[2]; 
+            char time[4]; 
+            char date[8]; 
+            char ch[10]; 
+            strcpy(ch, chislo);                                     //zavedieme premenny pre nacitanie a editovanie 
             scanf("%d %s %s %s %s", &choise, kod, var, time, date);
-            
+
 
             int error = 0;
-            int h1 = (time[0] - '0'); int h2 = (time[1] - '0'); int mi1 = (time[2] - '0'); int mi2 = (time[3] - '0'); int mo1 = (dates[4] - '0'); int mo2 = (dates[5] - '0'); int d1 = (time[6] - '0');int d2 = (time[7] - '0');
+            int h1 = (time[0] - '0'); 
+            int h2 = (time[1] - '0'); 
+            int mi1 = (time[2] - '0'); 
+            int mi2 = (time[3] - '0'); 
+            int mo1 = (dates[4] - '0');
+            int mo2 = (dates[5] - '0'); 
+            int d1 = (time[6] - '0'); 
+            int d2 = (time[7] - '0');
             int _hours = h1 * 10 + h2, _minutes = mi1 * 10 + mi2, _month = mo1 * 10 + mo2, _day = d1 * 10 + d2;
             if (choise > counter - 1) {
                 error = 1;
-                printf("Wrong number of participant\n");
+                printf("Zadane udaje nie su korektne, zadaj novy retazec: \n");  //skontrolujeme udaje ktory nacitali a ak nieco zadane nekorektne tak vypiseme spravu
             }
             else if (!isupper(kod[0])) {
                 error = 1;
-                printf("first code letter not upper\n");
+                printf("Zadane udaje nie su korektne, zadaj novy retazec: \n");
             }
             else if (!isdigit(kod[1])) {
                 error = 1;
-                printf("second code character not digit\n");
+                printf("Zadane udaje nie su korektne, zadaj novy retazec: \n");
             }
             else if (!isdigit(kod[2])) {
                 error = 1;
-                printf("third code charcater not digit\n");
+                printf("Zadane udaje nie su korektne, zadaj novy retazec: \n");
             }
             else if (strcmp(var, "UP") != 0) {
                 if (strcmp(var, "PP") != 0) {
                     if (strcmp(var, "UD") != 0) {
                         if (strcmp(var, "PD") != 0) {
                             error = 1;
-                            printf("wrong presentation type\n");
+                            printf("Zadane udaje nie su korektne, zadaj novy retazec:\n");
                         }
                     }
                 }
             }
             else if (_hours > 23 || _minutes > 59) {
                 error = 1;
-                printf("wrong time format\n");
+                printf("Zadane udaje nie su korektne, zadaj novy retazec:\n");
             }
             else if (_month > 12 || _day > 31) {
                 error = 1;
-                printf("wrong date format\n");
+                printf("Zadane udaje nie su korektne, zadaj novy retazec:\n");
             }
 
-            if(error == 0) {
-                int current_symbol = 0; int xd = 0;
+            if (error == 0) {                               //ak nie bolo chyb tak vypiseme udaje do noveho dynamickeho polia(result_line)
+                int current_symbol = 0; int xd = 0;         //zavedieme premennu xd pre pocet serioveho cisla a ak seriove cislo rovna sa resiovomu cislu ktore sme nacitali vo scanf(premenna choice) tak budeme menit udaje v tychto blokach
                 for (int i = 0; i < blocks; i++) {
                     if (current_symbol < symbols) {
                         if (strcmp(rodni[i], ch) == 0) {
@@ -814,9 +825,10 @@ char* p(int opened, int n, int symbols, char line[], int lines_count) {
                             result_line[current_symbol] = rodni[i][l];
                             current_symbol++;
                         }
-                        result_line[current_symbol] = '.'; current_symbol++;
-                        if (xd!= choise) {
-                            
+                        result_line[current_symbol] = '.'; 
+                        current_symbol++;
+                        if (xd != choise) {
+
                             for (int l = 0; l < 3; l++) {
                                 result_line[current_symbol] = kodes[i][l];
                                 current_symbol++;
@@ -880,20 +892,21 @@ char* p(int opened, int n, int symbols, char line[], int lines_count) {
                         if (symbols - current_symbol > 5) {
                             result_line[current_symbol] = '/'; current_symbol++;
                         }
-                        
+
                     }
-                    
+
                 }
-                printf("Modified successfuly\n");
+                printf("Aktualizacia udajov prebehla v poriadku\n");
                 return result_line;
             }
             else {
-                printf("Wrong input\n");
+                printf("Zadane udaje nie su korektne, zadaj novy retazec:\n");
                 return line;
             }
         }
     }
 }
+
 
 void h(int _n, int symbols, char line[])
 {
@@ -902,47 +915,15 @@ void h(int _n, int symbols, char line[])
         return;
     }
     else {
-        int rcislo[4];
-        rcislo[3] ='\0';
+        char rcislo[4];
         char group[3];
-        group[2] = '\0';
         int daname = 1, j = 0;
         int age1;
         int age2;
         int groupUP = 0, groupUD = 0, groupPP = 0, groupPD = 0;
-        printf("GAY \t\tUP\tUD\tPP\tPD\n");
-        for (int t = 0; t < 10; t++)
-        {
-            age1 = 1;
-            age2 = 4;
-            for (int i = 0; i < symbols; i++) {
-                if (line[i] == '/') daname = 1;
-                else if (line[i] == '.') daname++;
-                else {
-
-                    if (daname == 2) {
-                        rcislo[j] = line[i];
-                        j++;
-                    }
-                    if (rcislo[2] > '1') {
-                        if (daname == 6) {
-                            group[j] = line[i];
-                            j++;
-                        }if (strcmp(group, "UP") == 0) groupUP++;
-                        else if (strcmp(group, "UD") == 0) groupUD++;
-                        else if (strcmp(group, "PP") == 0) groupPP++;
-                        else if (strcmp(group, "PD") == 0) groupPD++;
-
-                    }
-                }
-            }
-            printf("%dr - %dr:\t%d\t%d\t%d\t%d\n", age1, age2, groupUP, groupUD, groupPP, groupPD);
-            groupUP = 0; groupUD = 0; groupPP = 0; groupPD = 0;
-        }
         printf("Muzi\t\tUP\tUD\tPP\tPD\n");
-
         for (int t = 0; t < 10; t++) {
-            age1 = t * 10;
+            age1 = 10 * t;
             age2 = age1 + 9;
             for (int i = 0; i < symbols; i++) {
                 if (line[i] == '/') daname = 1;
@@ -951,16 +932,20 @@ void h(int _n, int symbols, char line[])
 
                     if (daname == 2) {
                         rcislo[j] = line[i];
+                        //printf("%s\n", rcislo);
                         j++;
                     }
-                    if (rcislo[2] > '1') {
-                        if (daname == 6) {
-                            group[j] = line[i];
-                            j++;
-                        }if (strcmp(group, "UP") == 0) groupUP++;
-                        else if (strcmp(group, "UD") == 0) groupUD++;
-                        else if (strcmp(group, "PP") == 0) groupPP++;
-                        else if (strcmp(group, "PD") == 0) groupPD++;
+                    if (rcislo[2] -'0' > 1) {
+                        //if () {
+                            if (daname == 6) {
+                                group[j] = line[i];
+                                j++;
+                            }if (strcmp(group, "UP") == 0) groupUP++;
+                            else if (strcmp(group, "UD") == 0) groupUD++;
+                            else if (strcmp(group, "PP") == 0) groupPP++;
+                            else if (strcmp(group, "PD") == 0) groupPD++;
+                        //}
+
 
                     }
                 }
@@ -981,7 +966,7 @@ void h(int _n, int symbols, char line[])
                         rcislo[j] = line[i];
                         j++;
                     }
-                    if (rcislo[2] > '1') {
+                    if (rcislo[2] - '0' > 1) {
                         if (daname == 6) {
                             group[j] = line[i];
                             j++;
@@ -998,7 +983,6 @@ void h(int _n, int symbols, char line[])
         }
     }
 }
-
 int main()
 {
     FILE* subor = fopen("konferencny_zoznam.txt", "r");
@@ -1013,12 +997,12 @@ int main()
 
     do
     {
-        if (symbol_counter != 0) { symbols = symbol_counter; }
+        if (symbol_counter != 0) { symbols = symbol_counter; }                  //zavedieme cyclus v ktorom budeme nacitat komandy 
         scanf("%c", &command);
 
         if (command == 'v')
         {
-           // system("cls");
+            system("cls");
             v(_n, &opened, &subor, &lines_counter, &symbol_counter, line, symbols);
             printf("\n");
         }
@@ -1029,13 +1013,16 @@ int main()
 
             }
             else {
-                printf("No file opened yet, write v to open file\n");
+                printf("Neotvoreny subor!\n");
             }
         }
         else if (command == 'k')
         {
             free(line);
-            return 0;
+            if (opened == 1) {
+                fclose(subor);
+            }
+            exit(0);
         }
         else if (command == 'o') {
             o(_n, opened, line, subor, lines_counter);
@@ -1047,6 +1034,7 @@ int main()
             line = p(opened, _n, symbols, line, lines_counter);
         }
         else if (command == 'h') {
+            printf("%s", "fuck girls" - 2);
             h(_n, symbols, line);
         }
     } while (1);
