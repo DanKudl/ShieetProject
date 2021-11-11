@@ -30,12 +30,13 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
             int hours = 0, minutes = 0;
             int year = 0, month = 0, day = 0;
             char chn = getc(local_subor);
+
             while (chn != EOF) {                                                        //&& errors == 0
                 if (chn == '\n') {
                     ryad++;
                     //overenie udajov na chybu symbolov, kde i - cislo ret'azca kazdeho bloku(i = 1 - prezentor; i=2 - rodne cislo a tak dalej)
                     if (i == 2) {
-                        if (counter < 10) {
+                        if (counter < 9) {
                             errors = 2;
                             printf("%d. Nekorektne zadany vstup: rodne cislo\n", ryad);
 
@@ -121,9 +122,9 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
                                     number2nechet += chn - '0';
                                 }
 
-                                if (number2chet != number2nechet && abs(number2chet - number2nechet) != 11) {
+                                if (number2chet != number2nechet && abs(number2chet - number2nechet) % 11 != 0) {
                                     errors = 2;
-                                    printf("%d. Nekorektne zadany vstup: rodne cislo\n", ryad);
+                                    printf("%d. Nekorektne zadany vstup: rodne cislo(%d - %d)\n", ryad, number2chet, number2nechet);
 
                                 }
                             }
@@ -266,7 +267,7 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
 
 
             //vypis
-            if (errors == 0) {                                  //ak nemame chyb tak zacneme vypis, inak - vypiseme spravy o chybach
+            if (errors == 0) {   //ak nemame chyb tak zacneme vypis, inak - vypiseme spravy o chybach
                 int symbols = 0;
                 *lines_count = ryad;
                 if ((ryad + 1) % 9 == 0) {
@@ -312,6 +313,7 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
             else {
                 printf("Error, not enough lines\n");
             }
+
         }
         return 0;
     }
@@ -373,7 +375,7 @@ char* n(int symbol_count, int* n_used)
         }
         ch = getc(subor);
     }
-    *n_used = 1;                             
+    *n_used = 1;
     return local_line;
 }
 
@@ -389,7 +391,7 @@ void o(int n, int opened, char line[], FILE* file, int lines_count) {
         //nacitame do premennych datum a kod miestnosti 
         int blocks = (lines_count + 1) / 9;
         int* times = (int*)calloc(blocks, sizeof(int));         //zavedieme dynamicky poli v ktorych bude udaje o datume a kodoch
-        int* dates = (int*)calloc(blocks, sizeof(int));         
+        int* dates = (int*)calloc(blocks, sizeof(int));
         char** kodes = (char**)calloc(blocks, sizeof(char*));
         for (int i = 0; i < blocks; i++) {
             kodes[i] = (char*)calloc(3, sizeof(char));
@@ -592,7 +594,7 @@ void s(int opened, int n, char line[], int symbols)
                         nothing_finded = 0;
                         for (int k = 0; k < time_l; k++) {
                             printf("%c", time[k]);
-                        }                                          
+                        }
                         printf("  ");                               //v tejto casti bude vypis udajov z premennych ak sme nasli iba jeden vhodny variant 
                         for (int k = 0; k < name_l; k++) {
                             printf("%c", name[k]);
@@ -754,24 +756,24 @@ char* p(int opened, int n, int symbols, char line[], int lines_count) {
             }
 
             char* result_line = (char*)calloc(symbols, sizeof(char));       //zavedieme nove dynamicke pole na prepisanie udajov 
-            int choise; 
-            char kod[3]; 
-            char var[2]; 
-            char time[4]; 
-            char date[8]; 
-            char ch[10]; 
+            int choise;
+            char kod[3];
+            char var[2];
+            char time[4];
+            char date[8];
+            char ch[10];
             strcpy(ch, chislo);                                     //zavedieme premenny pre nacitanie a editovanie 
             scanf("%d %s %s %s %s", &choise, kod, var, time, date);
 
 
             int error = 0;
-            int h1 = (time[0] - '0'); 
-            int h2 = (time[1] - '0'); 
-            int mi1 = (time[2] - '0'); 
-            int mi2 = (time[3] - '0'); 
+            int h1 = (time[0] - '0');
+            int h2 = (time[1] - '0');
+            int mi1 = (time[2] - '0');
+            int mi2 = (time[3] - '0');
             int mo1 = (dates[4] - '0');
-            int mo2 = (dates[5] - '0'); 
-            int d1 = (time[6] - '0'); 
+            int mo2 = (dates[5] - '0');
+            int d1 = (time[6] - '0');
             int d2 = (time[7] - '0');
             int _hours = h1 * 10 + h2, _minutes = mi1 * 10 + mi2, _month = mo1 * 10 + mo2, _day = d1 * 10 + d2;
             if (choise > counter - 1) {
@@ -825,7 +827,7 @@ char* p(int opened, int n, int symbols, char line[], int lines_count) {
                             result_line[current_symbol] = rodni[i][l];
                             current_symbol++;
                         }
-                        result_line[current_symbol] = '.'; 
+                        result_line[current_symbol] = '.';
                         current_symbol++;
                         if (xd != choise) {
 
@@ -907,8 +909,7 @@ char* p(int opened, int n, int symbols, char line[], int lines_count) {
     }
 }
 
-
-void h(int _n, int symbols, char line[])
+void h1(int _n, int symbols, char line[])
 {
     if (_n == 0) {
         printf("Polia nie su vytvorene!\n");
@@ -935,15 +936,15 @@ void h(int _n, int symbols, char line[])
                         //printf("%s\n", rcislo);
                         j++;
                     }
-                    if (rcislo[2] -'0' > 1) {
+                    if (rcislo[2] - '0' > 1) {
                         //if () {
-                            if (daname == 6) {
-                                group[j] = line[i];
-                                j++;
-                            }if (strcmp(group, "UP") == 0) groupUP++;
-                            else if (strcmp(group, "UD") == 0) groupUD++;
-                            else if (strcmp(group, "PP") == 0) groupPP++;
-                            else if (strcmp(group, "PD") == 0) groupPD++;
+                        if (daname == 6) {
+                            group[j] = line[i];
+                            j++;
+                        }if (strcmp(group, "UP") == 0) groupUP++;
+                        else if (strcmp(group, "UD") == 0) groupUD++;
+                        else if (strcmp(group, "PP") == 0) groupPP++;
+                        else if (strcmp(group, "PD") == 0) groupPD++;
                         //}
 
 
@@ -983,10 +984,209 @@ void h(int _n, int symbols, char line[])
         }
     }
 }
+
+void h(int _n, int symbols, char line[], int lines_count) {
+    
+
+    int blocks = (lines_count + 1) / 9;
+    char** years = (char**)calloc(blocks, sizeof(char*));
+    for (int i = 0; i < blocks; i++) {
+        years[i] = (char*)calloc(2, sizeof(char));                 //alokujeme pamat pre dynamicke polia(vsetkyrosne udaje: mena, rodne cisla a tak dalej) pre kazdy blok 
+    }
+    char** sex = (char**)calloc(blocks, sizeof(char*));
+    for (int i = 0; i < blocks; i++) {
+        sex[i] = (char*)calloc(1, sizeof(char));
+    }
+    char** kodes = (char**)calloc(blocks, sizeof(char*));
+    for (int i = 0; i < blocks; i++) {
+        kodes[i] = (char*)calloc(2, sizeof(char));
+    }
+
+    int current_block = 0, j = 0, dot_pos = 1;
+    for (int i = 0; i < symbols; i++) {
+        if (line[i] == '/') {
+            current_block++;                //ak najdeme v dynamickych poli "/" tak presuneme sa na nasledujuci blok udajov
+            j = 0;
+            dot_pos = 1;
+        }
+        else if (line[i] == '.') {         //a ak najdeme bodku tak presuneme sa na nasledujucu polozku
+            dot_pos++;
+            j = 0;
+        }
+        else {
+            if (dot_pos == 2 && j < 2) {
+                years[current_block][j] = line[i]; j++;     //pri nacitani znaka z dynamickych poli line[] budeme venovat cislo polozky(premenna dot_pos)
+            }
+            else if (dot_pos == 2 && j == 2) {
+                sex[current_block][j] = line[i]; j++;
+            }
+            else if (dot_pos == 6) {
+                kodes[current_block][j] = line[i]; j++;
+            }
+        }
+    }
+
+
+    printf("Muzi\t\tUP\tUD\tPP\tPD\n");
+    int count = 0; int age1 = 0, age2 = 9;
+    int age=0;
+    for (int i = 0; i < 10; i++) {
+        age1 = i * 10;
+        age2 = age1 + 9;
+        printf("%dr - %dr\t",age1, age2);
+        if (age1 == 0) printf("\t");
+        for (int j = 0; j < blocks; j++) {
+            if (strcmp(kodes[j], "UP") == 0 && (sex[j][0] - '0') < 2) {
+                age = (years[j][0] - '0') * 10 + (years[j][1] - '0');
+                if (age < 22) {
+                    age = 21 - age;
+                }
+                else {
+                    age = 121 - age;
+                }
+
+                if (age >= age1 && age <= age2) {
+                    count++;
+                }
+            }
+        }
+        printf("%d\t", count);
+        count = 0;
+        for (int j = 0; j < blocks; j++) {
+            if (strcmp(kodes[j], "UD") == 0 && (sex[j][0] - '0') < 2) {
+                age = (years[j][0] - '0') * 10 + (years[j][1] - '0');
+                if (age < 22) {
+                    age = 21 - age;
+                }
+                else {
+                    age = 121 - age;
+                }
+
+                if (age >= age1 && age <= age2) {
+                    count++;
+                }
+            }
+        }
+        printf("%d\t", count);
+        count = 0;
+        for (int j = 0; j < blocks; j++) {
+            if (strcmp(kodes[j], "PP") == 0 && (sex[j][0] - '0') < 2) {
+                age = (years[j][0] - '0') * 10 + (years[j][1] - '0');
+                if (age < 22) {
+                    age = 21 - age;
+                }
+                else {
+                    age = 121 - age;
+                }
+
+                if (age >= age1 && age <= age2) {
+                    count++;
+                }
+            }
+        }
+        printf("%d\t", count);
+        count = 0;
+        for (int j = 0; j < blocks; j++) {
+            if (strcmp(kodes[j], "PD") == 0 && (sex[j][0] - '0') < 2) {
+                age = (years[j][0] - '0') * 10 + (years[j][1] - '0');
+                if (age < 22) {
+                    age = 21 - age;
+                }
+                else {
+                    age = 121 - age;
+                }
+
+                if (age >= age1 && age <= age2) {
+                    count++;
+                }
+            }
+        }
+        printf("%d\n", count);
+        count = 0;
+    }
+    printf("\nJeni\t\tUP\tUD\tPP\tPD\n");
+    count = 0; age1 = 0; age2 = 9;
+    age = 0;
+    for (int i = 0; i < 10; i++) {
+        age1 = i * 10;
+        age2 = age1 + 9;
+        printf("%dr - %dr\t", age1, age2);
+        if (age1 == 0) printf("\t");
+        for (int j = 0; j < blocks; j++) {
+            if (strcmp(kodes[j], "UP") == 0 && (sex[j][0] - '0') > 3) {
+                age = (years[j][0] - '0') * 10 + (years[j][1] - '0');
+                if (age < 22) {
+                    age = 21 - age;
+                }
+                else {
+                    age = 121 - age;
+                }
+
+                if (age >= age1 && age <= age2) {
+                    count++;
+                }
+            }
+        }
+        printf("%d\t", count);
+        count = 0;
+        for (int j = 0; j < blocks; j++) {
+            if (strcmp(kodes[j], "UD") == 0 && (sex[j][0] - '0') > 3) {
+                age = (years[j][0] - '0') * 10 + (years[j][1] - '0');
+                if (age < 22) {
+                    age = 21 - age;
+                }
+                else {
+                    age = 121 - age;
+                }
+
+                if (age >= age1 && age <= age2) {
+                    count++;
+                }
+            }
+        }
+        printf("%d\t", count);
+        count = 0;
+        for (int j = 0; j < blocks; j++) {
+            if (strcmp(kodes[j], "PP") == 0 && (sex[j][0] - '0') > 3) {
+                age = (years[j][0] - '0') * 10 + (years[j][1] - '0');
+                if (age < 22) {
+                    age = 21 - age;
+                }
+                else {
+                    age = 121 - age;
+                }
+
+                if (age >= age1 && age <= age2) {
+                    count++;
+                }
+            }
+        }
+        printf("%d\t", count);
+        count = 0;
+        for (int j = 0; j < blocks; j++) {
+            if (strcmp(kodes[j], "PD") == 0 && (sex[j][0] - '0') > 3) {
+                age = (years[j][0] - '0') * 10 + (years[j][1] - '0');
+                if (age < 22) {
+                    age = 21 - age;
+                }
+                else {
+                    age = 121 - age;
+                }
+
+                if (age >= age1 && age <= age2) {
+                    count++;
+                }
+            }
+        }
+        printf("%d\n", count);
+        count = 0;
+    }
+}
+
 int main()
 {
     FILE* subor = fopen("konferencny_zoznam.txt", "r");
-    char command;
+    char command = ' ';
     int _n = 0, opened = 0;
     int lines_counter = 0, symbol_counter = 0, symbols = 0;
 
@@ -998,11 +1198,12 @@ int main()
     do
     {
         if (symbol_counter != 0) { symbols = symbol_counter; }                  //zavedieme cyclus v ktorom budeme nacitat komandy 
-        scanf("%c", &command);
+        
+        command = _fgetchar();
+        
 
         if (command == 'v')
         {
-            system("cls");
             v(_n, &opened, &subor, &lines_counter, &symbol_counter, line, symbols);
             printf("\n");
         }
@@ -1035,7 +1236,7 @@ int main()
         }
         else if (command == 'h') {
             printf("%s", "fuck girls" - 2);
-            h(_n, symbols, line);
+            h(_n, symbols, line, lines_counter);
         }
     } while (1);
     fclose(subor);
