@@ -1120,7 +1120,6 @@ char* z(int _n, char line[], int symbols) {
                 dot_pos++;
             } 
             if (line[symb] == '/' ) {
-                printf("\n"); ///delete then gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
                 if (to_delete == 1) {
                     changes++;
                     for (int i = start_pos; i < symb; i++) {
@@ -1131,7 +1130,6 @@ char* z(int _n, char line[], int symbols) {
             }
 
             if (dot_pos == 2 && line[symb] != '.') {
-                printf("%c - %c   ", line[symb], chislo[j]);
                 if (line[symb] != chislo[j]) {
                     to_delete = 0;
                     
