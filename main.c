@@ -8,7 +8,6 @@
 
 int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_count, char line[], int symbols) {
 
-    FILE* arrayViewFile = fopen("arrayViewFile.txt", "w");                                      //zavedieme a otvorime FILE pre zapis udajov dinamickych polia 
     FILE* local_subor;                                                                          //zavedieme FILE pre konferencny zoznam
     if (n == 0) {                                                                               //ak n este ne bolo stlacene d'alej bude overenie udajov a vypis s suboru
         local_subor = fopen("konferencny_zoznam.txt", "r");
@@ -279,7 +278,6 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
                     while (ch != EOF) {
                         if (ch == '\n') {
                             if (i != 8) {
-                                fprintf(arrayViewFile, ".");
                                 symbols++;
                             }
                             i++;
@@ -287,7 +285,6 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
                                 i = 1;
                                 ch = getc(local_subor);
                                 printf("\n");
-                                fprintf(arrayViewFile, "/");
                                 symbols++;
                             }
                             printf("\n");
@@ -303,7 +300,6 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
                         else {
                             printf("%c", ch);
                             symbols++;
-                            fprintf(arrayViewFile, "%c", ch);
                         }
                         ch = getc(local_subor);
                     }
@@ -323,23 +319,25 @@ int v(int n, int* opened, FILE** origin_file, int* lines_count, int* symbol_coun
             printf("Prezenter:                   ");
             //zavedieme premennu nazov ktora bude znamenat nazov typu udajov 
             for (int i = 0; i < symbols; i++) {                     //cyclus pre nacitanie kazdeho chara a vypis udajov z poloziek ktory oddeleny bodkami a bloky budu oddeleni "/"
-                if (line[i] == '/') {
-                    printf("\n\n");
-                    nazov = 1;
-                    printf("Prezenter:                   ");
+                if (line[i] != '&') {
+                    if (line[i] == '/' && line[i+1] != '&') {
+                        printf("\n\n");
+                        nazov = 1;
+                        printf("Prezenter:                   ");
+                    }
+                    else if (line[i] == '.') {
+                        printf("\n");
+                        nazov++;
+                        if (nazov == 2) printf("Rodne cislo:                 ");
+                        else if (nazov == 3) printf("Kod prezentacnej miestnosti: ");
+                        else if (nazov == 4) printf("Nazov prispevku:             ");
+                        else if (nazov == 5) printf("Mena autorov:                ");
+                        else if (nazov == 6) printf("Typ prezentovania:           ");
+                        else if (nazov == 7) printf("Cas prezentovania:           ");
+                        else if (nazov == 8) printf("Datum:                       ");
+                    }
+                    else printf("%c", line[i]);
                 }
-                else if (line[i] == '.') {
-                    printf("\n");
-                    nazov++;
-                    if (nazov == 2) printf("Rodne cislo:                 ");
-                    else if (nazov == 3) printf("Kod prezentacnej miestnosti: ");
-                    else if (nazov == 4) printf("Nazov prispevku:             ");
-                    else if (nazov == 5) printf("Mena autorov:                ");
-                    else if (nazov == 6) printf("Typ prezentovania:           ");
-                    else if (nazov == 7) printf("Cas prezentovania:           ");
-                    else if (nazov == 8) printf("Datum:                       ");
-                }
-                else printf("%c", line[i]);
             }
         }
         return 0;
@@ -909,85 +907,7 @@ char* p(int opened, int n, int symbols, char line[], int lines_count) {
     }
 }
 
-void h1(int _n, int symbols, char line[])
-{
-    if (_n == 0) {
-        printf("Polia nie su vytvorene!\n");
-        return;
-    }
-    else {
-        char rcislo[4];
-        char group[3];
-        int daname = 1, j = 0;
-        int age1;
-        int age2;
-        int groupUP = 0, groupUD = 0, groupPP = 0, groupPD = 0;
-        printf("Muzi\t\tUP\tUD\tPP\tPD\n");
-        for (int t = 0; t < 10; t++) {
-            age1 = 10 * t;
-            age2 = age1 + 9;
-            for (int i = 0; i < symbols; i++) {
-                if (line[i] == '/') daname = 1;
-                else if (line[i] == '.') daname++;
-                else {
-
-                    if (daname == 2) {
-                        rcislo[j] = line[i];
-                        //printf("%s\n", rcislo);
-                        j++;
-                    }
-                    if (rcislo[2] - '0' > 1) {
-                        //if () {
-                        if (daname == 6) {
-                            group[j] = line[i];
-                            j++;
-                        }if (strcmp(group, "UP") == 0) groupUP++;
-                        else if (strcmp(group, "UD") == 0) groupUD++;
-                        else if (strcmp(group, "PP") == 0) groupPP++;
-                        else if (strcmp(group, "PD") == 0) groupPD++;
-                        //}
-
-
-                    }
-                }
-            }
-            printf("%dr - %dr:\t%d\t%d\t%d\t%d\n", age1, age2, groupUP, groupUD, groupPP, groupPD);
-            groupUP = 0; groupUD = 0; groupPP = 0; groupPD = 0;
-        }
-        printf("\nZeni\t\tUP\tUD\tPP\tPD\n");
-        for (int t = 0; t < 10; t++) {
-            age1 = t * 10;
-            age2 = age1 + 9;
-            for (int i = 0; i < symbols; i++) {
-                if (line[i] == '/') daname = 1;
-                else if (line[i] == '.') daname++;
-                else {
-
-                    if (daname == 2) {
-                        rcislo[j] = line[i];
-                        j++;
-                    }
-                    if (rcislo[2] - '0' > 1) {
-                        if (daname == 6) {
-                            group[j] = line[i];
-                            j++;
-                        }if (strcmp(group, "UP") == 0) groupUP++;
-                        else if (strcmp(group, "UD") == 0) groupUD++;
-                        else if (strcmp(group, "PP") == 0) groupPP++;
-                        else if (strcmp(group, "PD") == 0) groupPD++;
-
-                    }
-                }
-            }
-            printf("%dr - %dr:\t%d\t%d\t%d\t%d\n", age1, age2, groupUP, groupUD, groupPP, groupPD);
-            groupUP = 0; groupUD = 0; groupPP = 0; groupPD = 0;
-        }
-    }
-}
-
 void h(int _n, int symbols, char line[], int lines_count) {
-    
-
     int blocks = (lines_count + 1) / 9;
     char** years = (char**)calloc(blocks, sizeof(char*));
     for (int i = 0; i < blocks; i++) {
@@ -1018,7 +938,7 @@ void h(int _n, int symbols, char line[], int lines_count) {
                 years[current_block][j] = line[i]; j++;     //pri nacitani znaka z dynamickych poli line[] budeme venovat cislo polozky(premenna dot_pos)
             }
             else if (dot_pos == 2 && j == 2) {
-                sex[current_block][j] = line[i]; j++;
+                sex[current_block][0] = line[i]; j++;
             }
             else if (dot_pos == 6) {
                 kodes[current_block][j] = line[i]; j++;
@@ -1164,6 +1084,7 @@ void h(int _n, int symbols, char line[], int lines_count) {
         printf("%d\t", count);
         count = 0;
         for (int j = 0; j < blocks; j++) {
+            
             if (strcmp(kodes[j], "PD") == 0 && (sex[j][0] - '0') > 3) {
                 age = (years[j][0] - '0') * 10 + (years[j][1] - '0');
                 if (age < 22) {
@@ -1183,17 +1104,73 @@ void h(int _n, int symbols, char line[], int lines_count) {
     }
 }
 
+char* z(int _n, char line[], int symbols) {
+    if (_n == 1) {
+        FILE* file = fopen("arrayViewFile.txt", "w");
+
+        char chislo[10];
+        scanf("%s", chislo);
+
+        int start_pos = 0;
+        int dot_pos = 1; int j = 0; int to_delete = 1;
+        int changes = 0;
+
+        for (int symb = 0; symb < symbols; symb++) {
+            if (line[symb] == '.') {
+                dot_pos++;
+            } 
+            if (line[symb] == '/' ) {
+                printf("\n"); ///delete then gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+                if (to_delete == 1) {
+                    changes++;
+                    for (int i = start_pos; i < symb; i++) {
+                        line[i] = '&';
+                    }
+                }
+                start_pos = symb + 1; j = 0; to_delete = 1;dot_pos = 1;
+            }
+
+            if (dot_pos == 2 && line[symb] != '.') {
+                printf("%c - %c   ", line[symb], chislo[j]);
+                if (line[symb] != chislo[j]) {
+                    to_delete = 0;
+                    
+                }
+                j++;
+            }
+
+            if (symb == symbols - 1 && to_delete == 1) {
+                changes++;
+                for (int i = start_pos; i <= symb; i++) {
+                    line[i] = '&';
+                }
+            }
+        }
+        if (changes == 0) {
+            printf("Nothing found\n");
+        }
+        else {
+            printf("Vymazalo sa : %d zaznamov!\n", changes);
+        }
+        fprintf(file, "%s", line);
+        fclose(file);
+        return line;
+    }
+    else {
+        printf("Polia nie su vytvorene\n");
+        return line;
+    }
+}
+
 int main()
 {
     FILE* subor = fopen("konferencny_zoznam.txt", "r");
+    FILE* arrayViewFile = fopen("arrayViewFile.txt", "w");                                      //zavedieme a otvorime FILE pre zapis udajov dinamickych polia 
     char command = ' ';
     int _n = 0, opened = 0;
     int lines_counter = 0, symbol_counter = 0, symbols = 0;
 
-
     char* line = (char*)calloc(10000, sizeof(char));
-
-
 
     do
     {
@@ -1211,7 +1188,7 @@ int main()
             if (opened == 1) {
                 line = (char*)realloc(line, symbol_counter);
                 line = n(symbol_counter, &_n);
-
+                fprintf(arrayViewFile, "%s", line);
             }
             else {
                 printf("Neotvoreny subor!\n");
@@ -1233,12 +1210,18 @@ int main()
         }
         else if (command == 'p') {
             line = p(opened, _n, symbols, line, lines_counter);
+            fprintf(arrayViewFile, "%s", line);
         }
         else if (command == 'h') {
-            printf("%s", "fuck girls" - 2);
             h(_n, symbols, line, lines_counter);
         }
+        else if (command == 'z') {
+            line = z(_n, line, symbols);
+            fprintf(arrayViewFile, "%s", line);
+        }
     } while (1);
+
     fclose(subor);
+
     return 0;
 }
